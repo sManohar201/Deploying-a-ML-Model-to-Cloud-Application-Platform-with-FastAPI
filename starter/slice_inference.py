@@ -1,5 +1,5 @@
 """
-    This script runs inference on the sliced data.
+    This script runs inference and metrics on the sliced data.
     Author: Sabari Manohar 
     Date:   March, 2024 
 """

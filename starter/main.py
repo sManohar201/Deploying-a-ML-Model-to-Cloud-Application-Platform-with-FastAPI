@@ -51,7 +51,7 @@ api = FastAPI()
 
 @api.get('/')
 async def welcome():
-    return {'message': 'Welcome to the Income Prediction Service!'}
+    return 'Welcome to the Income Prediction Service!'
 
 @api.post('/prediction')
 async def generate_prediction(client_input: ClientInput):
