@@ -18,7 +18,16 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger()
 
 def analyze_feature_slices(data, categorical_features):
-    """Evaluates model performance across slices of the dataset based on categorical features."""
+    """Evaluates model performance across slices of the dataset based on categorical features.
+
+    Args:
+        data (pandas.DataFrame): The dataset containing the features and target variable.
+        categorical_features (list): A list of categorical feature names in the dataset.
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing evaluation results for each feature slice, 
+                          including feature name, category value, precision, recall, and Fbeta score.
+    """
     logger.info("Load model")
     model = joblib.load('starter/model/model.pkl')
     encoder = joblib.load('starter/model/encoder.pkl')
