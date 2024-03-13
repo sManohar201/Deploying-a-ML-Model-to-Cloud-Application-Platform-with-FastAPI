@@ -19,7 +19,7 @@ logger = logging.getLogger()
 
 # Data loading and preparation
 logger.info('Loading and splitting dataset')
-data_path =  'data/census_clean.csv'
+data_path =  'starter/data/census_clean.csv'
 
 df = pd.read_csv(data_path)
 df_train, df_test = train_test_split(df, test_size=0.20, random_state=42)  # Ensures reproducibility
@@ -54,6 +54,6 @@ logger.info(f"Precision: {precision: .2f}. Recall: {recall: .2f}. Fbeta: {fbeta:
 
 # Serializing model artifacts
 logger.info('Saving model artifacts')
-joblib.dump(model, 'model/model.pkl')
-joblib.dump(encoder, 'model/encoder.pkl')
-joblib.dump(lb, 'model/lb.pkl')
+joblib.dump(trained_model, 'starter/model/model.pkl')
+joblib.dump(encoder, 'starter/model/encoder.pkl')
+joblib.dump(lb, 'starter/model/lb.pkl')
