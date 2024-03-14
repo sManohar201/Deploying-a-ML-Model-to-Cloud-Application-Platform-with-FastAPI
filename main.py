@@ -50,7 +50,7 @@ class ClientInput(BaseModel):
     native_country: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
                         "example": {"age": 52,
                                     "workclass": "Self-emp-inc",
                                     "fnlgt": 287927,
