@@ -1,72 +1,136 @@
+"""
+    This script provide FASTapi endpoints.
+    Author: Sabari Manohar
+    Date:   March, 2024
+"""
+
 import uvicorn
+import os
 import joblib
+import pickle
+import logging
 from fastapi import FastAPI
 import pandas as pd
 from pydantic import BaseModel, Field
-from starter.ml.model_inference import predict  # More clarity
-from starter.ml.data_processing import preprocess_data  # More clarity
+from ml.model import inference # More clarity
+from ml.data import process_data  # More clarity
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, 
+                    format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger()
 
 # Define categorical features
 categorical_features = [
-    'work_category',  # Simpler names
-    'education_level',
-    'marital_status',
-    'occupation_category',
-    'relationship_status',
+    'workclass',  
+    'education',
+    'marital-status',
+    'occupation',
+    'relationship',
     'race',
-    'gender',
-    'country_origin'
+    'sex',
+    'native-country',
 ]
 
 # Input data model
 class ClientInput(BaseModel):
-    age: int = Field(examples=[29])
-    work_category: str = Field(examples=['Union-gov'])
-    final_weight: int = Field(examples=[82316])
-    education_level: str = Field(examples=['Bachelors'])
-    education_years: int = Field(alias='education-num', examples=[13])
-    marital_status: str = Field(examples=['Never-married'])
-    occupation_category: str = Field(examples=['Medicine'])
-    relationship_status: str = Field(examples=['Bachelor'])
-    race: str = Field(examples=['South-Asian'])
-    gender: str = Field(examples=['Female'])
-    capital_gain: int = Field(examples=[744])
-    capital_loss: int = Field(examples=[32])
-    weekly_work_hours: int = Field(alias='hours-per-week', examples=[50])
-    country_origin: str = Field(alias='country-origin', examples=['India'])
+    age: int
+    workclass: str 
+    fnlgt: int
+    education: str
+    education_num: int
+    marital_status: str
+    occupation: str
+    relationship: str
+    race: str
+    sex: str
+    capital_gain: int
+    capital_loss: int
+    hours_per_week: int
+    native_country: str
+
+    class Config:
+        schema_extra = {
+                        "example": {"age": 52,
+                                    "workclass": "Self-emp-inc",
+                                    "fnlgt": 287927,
+                "education": "HS-grad",
+                "education_num": 9,
+                "marital_status": "Married-civ-spouse",
+                "occupation": "Exec-managerial",
+                "relationship": "Wife",
+                "race": "White",
+                "sex": "Female",
+                "capital_gain": 15024,
+                "capital_loss": 0,
+                "hours_per_week": 40,
+                "native_country": "United-States"
+                                    }
+                        }
 
 # Paths to model artifacts
 model_artifact_dir = 'model/'  # For consistent organization
-model_file = model_artifact_dir + 'income_model.pkl' 
-encoder_file = model_artifact_dir + 'data_encoder.pkl'
-label_binarizer_file = model_artifact_dir + 'label_transformer.pkl'
+model_file = model_artifact_dir + 'model.pkl' 
+encoder_file = model_artifact_dir + 'encoder.pkl'
+label_binarizer_file = model_artifact_dir + 'lb.pkl'
 
-# Load the artifacts
 model = joblib.load(model_file)
 encoder = joblib.load(encoder_file)
 lb = joblib.load(label_binarizer_file)
 
 # Initialize the FastAPI app
-api = FastAPI()
+api = FastAPI(title="Prediction API", 
+              description="Runs prediction on a sample.",
+              version="1.0.0")
+
 
 @api.get('/')
 async def welcome():
     return 'Welcome to the Income Prediction Service!'
 
-@api.post('/prediction')
-async def generate_prediction(client_input: ClientInput):
-    input_df = pd.DataFrame(client_input.dict(by_alias=True), index=[0])
+@api.post('/dummy')
+async def check(input: ClientInput):
+    print(type(input))
+    print(input.age)
+    return int(input.age)
 
-    prepared_data = preprocess_data(
-        input_df, categorical_features=categorical_features, encoder=encoder, lb=lb
+@api.post('/predict')
+async def generate_prediction(client_input: ClientInput):
+    logger.info(f"{client_input.age}")
+    # create dictionary
+    data = {'age': client_input.age,
+                'workclass': client_input.workclass, 
+                'fnlgt': client_input.fnlgt,
+                'education': client_input.education,
+                'education-num': client_input.education_num,
+                'marital-status': client_input.marital_status,
+                'occupation': client_input.occupation,
+                'relationship': client_input.relationship,
+                'race': client_input.race,
+                'sex': client_input.sex,
+                'capital-gain': client_input.capital_gain,
+                'capital-loss': client_input.capital_loss,
+                'hours-per-week': client_input.hours_per_week,
+                'native-country': client_input.native_country,
+                }
+    input_df = pd.DataFrame(data, index=[0])
+
+    prepared_data = process_data(
+        input_df, categorical_features=categorical_features, training=False, 
+        encoder=encoder, lb=lb
     )
 
-    x_data, y_data, _ = prepared_data
-    income_prediction = predict(model, x_data)
+    x_data, y_data, _, _ = prepared_data
+    income_prediction = inference(model, x_data)
 
-    predicted_category = lb.inverse_transform(income_prediction)[0]
+    if income_prediction[0] > 0.5:
+        income_prediction = '>50K'
+    else:
+        income_prediction = '<=50K'
+    data['prediction'] = income_prediction
 
-    return {'Predicted Income': predicted_category}
+    return data 
 
 if __name__ == "__main__":
-    uvicorn.run('main:api', host='0.0.0.0', port=5000, reload=True)
+    # uvicorn.run('main:api', host='0.0.0.0', port=5000, reload=True)
+    pass

@@ -30,20 +30,20 @@ categorical_features = [
 def test_model_loading():
     """Verifies that the saved model can be loaded and is of the expected type.
     """
-    loaded_model = joblib.load('starter/model/model.pkl')  
+    loaded_model = joblib.load('model/model.pkl')  
     assert isinstance(loaded_model, RandomForestClassifier)
 
 def test_data_integrity():
     """Checks if the dataset can be loaded and contains at least one data point.
     """
-    data_path = 'starter/data/census_clean.csv'
+    data_path = 'data/census_clean.csv'
     df = pd.read_csv(data_path)
     assert df.shape[0] > 0  # Ensure there are rows
 
 def test_processing_consistency():
     """Ensures that data processing produces feature and target arrays with compatible shapes.
     """
-    data_path = 'starter/data/census_clean.csv'
+    data_path = 'data/census_clean.csv'
     df = pd.read_csv(data_path)
     df_train, df_test = train_test_split(df, test_size=0.20, random_state=42) 
 
