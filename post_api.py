@@ -11,7 +11,7 @@ url = "https://deploying-a-ml-model-to-cloud-fk8k.onrender.com/predict"
 
 
 # explicit the sample to perform inference on
-sample =  { 'age':50,
+data =  { 'age':50,
             'workclass':"Private", 
             'fnlgt':234721,
             'education':"Doctorate",
@@ -27,10 +27,8 @@ sample =  { 'age':50,
             'native_country':"United-States"
             }
 
-data = json.dumps(sample)
-
-# post to API and collect response
-response = requests.post(url, data=data)
+# post to cloud API get response
+response = requests.post(url, json=data)
 
 # display output - response will show sample details + model prediction added
 print("response status code", response.status_code)

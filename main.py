@@ -122,6 +122,3 @@ async def generate_prediction(client_input: ClientInput):
     data['prediction'] = income_prediction
 
     return data 
-
-if __name__ == "__main__":
-    pass
