@@ -49,21 +49,21 @@ class ClientInput(BaseModel):
 
     class Config:
         json_schema_extra = {
-                        "example": {"age": 52,
-                                    "workclass": "Self-emp-inc",
-                                    "fnlgt": 287927,
-                "education": "HS-grad",
-                "education_num": 9,
-                "marital_status": "Married-civ-spouse",
-                "occupation": "Exec-managerial",
-                "relationship": "Wife",
-                "race": "White",
-                "sex": "Female",
-                "capital_gain": 15024,
-                "capital_loss": 0,
-                "hours_per_week": 40,
-                "native_country": "United-States"
-                                    }
+                        "example": {"age": 47,
+            "workclass": "Private",
+            "fnlgt": 51835,
+            "education": "Prof-school",
+            "education_num": 15,
+            "marital_status": "Married-civ-spouse",
+            "occupation": "Prof-specialty",
+            "relationship": "Wife",
+            "race": "White",
+            "sex": "Female",
+            "capital_gain": 0,
+            "capital_loss": 1902,
+            "hours_per_week": 60,
+            "native_country": "Honduras"
+            }
                         }
 
 # Paths to model artifacts

@@ -44,27 +44,28 @@ def test_inference_zero():
 
     # test output response
     assert res.status_code == 200
-    assert res.json()["age"] == 52
-    assert res.json()["fnlgt"] == 287927
+    assert res.json()["age"] == 52 
+    assert res.json()["fnlgt"] == 287927 
     assert res.json()["prediction"] == '>50K'
 
 def test_inference_one():
     """
     Test model inference output 
     """
-    data =  {  'age':30,
+
+    data =  {  'age':32,
                 'workclass':"Private", 
-                'fnlgt':234721,
+                'fnlgt': 186824,
                 'education':"HS-grad",
-                'education_num':1,
-                'marital_status':"Separated",
-                'occupation':"Handlers-cleaners",
-                'relationship':"Not-in-family",
-                'race':"Black",
+                'education_num':9,
+                'marital_status':"Never-married",
+                'occupation':"Machine-op-inspct",
+                'relationship':"Unmarried",
+                'race':"White",
                 'sex':"Male",
                 'capital_gain':0,
                 'capital_loss':0,
-                'hours_per_week':35,
+                'hours_per_week':40,
                 'native_country':"United-States"
             }
     # data = json.dumps(data)
@@ -73,8 +74,8 @@ def test_inference_one():
 
     # test output response
     assert res.status_code == 200
-    assert res.json()["age"] == 30
-    assert res.json()["fnlgt"] == 234721
+    assert res.json()["age"] == 32
+    assert res.json()["fnlgt"] == 186824 
     assert res.json()["prediction"] == '<=50K'
 
 
