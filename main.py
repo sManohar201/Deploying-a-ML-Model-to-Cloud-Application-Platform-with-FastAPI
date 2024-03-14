@@ -5,9 +5,7 @@
 """
 
 import uvicorn
-import os
 import joblib
-import pickle
 import logging
 from fastapi import FastAPI
 import pandas as pd
@@ -88,12 +86,6 @@ api = FastAPI(title="Prediction API",
 async def welcome():
     return 'Welcome to the Income Prediction Service!'
 
-@api.post('/dummy')
-async def check(input: ClientInput):
-    print(type(input))
-    print(input.age)
-    return int(input.age)
-
 @api.post('/predict')
 async def generate_prediction(client_input: ClientInput):
     logger.info(f"{client_input.age}")
@@ -132,5 +124,4 @@ async def generate_prediction(client_input: ClientInput):
     return data 
 
 if __name__ == "__main__":
-    # uvicorn.run('main:api', host='0.0.0.0', port=5000, reload=True)
     pass

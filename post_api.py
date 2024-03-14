@@ -1,5 +1,5 @@
 """
-    This script is to post to FastAPI for inference
+    This script is to post to cloud platform for inference
     Author: Sabari Manohar 
     Date:   March, 2024 
 """
@@ -7,8 +7,7 @@
 import requests
 import json
 
-#url = "enter heroku web app url here"
-url = "https://udacity-fastapi-app.herokuapp.com/inference"
+url = "https://deploying-a-ml-model-to-cloud-fk8k.onrender.com/predict"
 
 
 # explicit the sample to perform inference on
@@ -31,7 +30,7 @@ sample =  { 'age':50,
 data = json.dumps(sample)
 
 # post to API and collect response
-response = requests.post(url, data=data )
+response = requests.post(url, data=data)
 
 # display output - response will show sample details + model prediction added
 print("response status code", response.status_code)
