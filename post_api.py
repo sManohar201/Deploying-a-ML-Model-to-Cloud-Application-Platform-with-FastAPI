@@ -7,7 +7,7 @@
 import requests
 import json
 
-url = "https://deploying-a-ml-model-to-cloud-fk8k.onrender.com/predict"
+url = "https://cloud-application-with-fastapi.onrender.com/predict"
 
 
 # explicit the sample to perform inference on
