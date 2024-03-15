@@ -9,6 +9,22 @@ The project follows the steps mentioned below:
    - Render: Create cloud inference endpoint. the required files are `requirements.txt` for installing the dependencies. 
    - CI/CD: Implement continuous integration and continuous deployment using github actions and Render platform. 
 
+# Screenshots:
+   - Continuous integration:
+      ![](screenshots/continuous_integration.png)
+      ![](screenshots/continuous-integration1.png)
+
+   - Continuous Deployment:
+      ![](screenshots/continuous-deployment.png)
+      ![](screenshots/auto_deploy_proof.png)
+
+   - Live post and get:
+      ![](screenshots/live_get.png)
+      ![](screenshots/live_post.png)
+   
+   - FastAPI documentation:
+      ![](screenshots/example.png)
+
 # Project Instructions and results:
 Working in a command line environment is recommended for ease of use with git and dvc. If on Windows, WSL1 or 2 is recommended.
 

@@ -9,7 +9,7 @@ import joblib
 import logging
 from fastapi import FastAPI
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from contextlib import asynccontextmanager
 
 from ml.model import inference # More clarity
@@ -37,20 +37,20 @@ def hyphen_to_underscore(field_name):
 
 # Input data model
 class ClientInput(BaseModel):
-    age: int
-    workclass: str 
-    fnlgt: int 
-    education: str 
-    education_num: int 
-    marital_status: str 
-    occupation: str
-    relationship: str
-    race: str 
-    sex: str
-    capital_gain: int 
-    capital_loss: int 
-    hours_per_week: int
-    native_country: str 
+    age: int = Field(..., example=50)
+    workclass: str = Field(..., example="Private") 
+    fnlgt: int = Field(..., example=234721) 
+    education: str = Field(..., example="Doctorate")
+    education_num: int = Field(..., example=16)
+    marital_status: str = Field(..., example="Separated")
+    occupation: str = Field(..., example="Exec-managerial")
+    relationship: str = Field(..., example="Not-in-family")
+    race: str = Field(..., example="Black")
+    sex: str = Field(..., example="Female")
+    capital_gain: int = Field(..., example=0)
+    capital_loss: int = Field(..., example=0)
+    hours_per_week: int = Field(..., example=50)
+    native_country: str = Field(..., example="United-States")
 
     class ConfigDict:
         json_schema_extra = {
