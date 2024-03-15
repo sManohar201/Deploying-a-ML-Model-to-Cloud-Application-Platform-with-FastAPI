@@ -4,12 +4,14 @@
     Date:   March, 2024
 """
 
-import uvicorn
+import os
 import joblib
 import logging
 from fastapi import FastAPI
 import pandas as pd
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from contextlib import asynccontextmanager
+
 from ml.model import inference # More clarity
 from ml.data import process_data  # More clarity
 
@@ -30,40 +32,44 @@ categorical_features = [
     'native-country',
 ]
 
+def hyphen_to_underscore(field_name):
+    return f"{field_name}".replace("_", "-")
+
 # Input data model
 class ClientInput(BaseModel):
     age: int
     workclass: str 
-    fnlgt: int
-    education: str
-    education_num: int
-    marital_status: str
+    fnlgt: int 
+    education: str 
+    education_num: int 
+    marital_status: str 
     occupation: str
     relationship: str
-    race: str
+    race: str 
     sex: str
-    capital_gain: int
-    capital_loss: int
+    capital_gain: int 
+    capital_loss: int 
     hours_per_week: int
-    native_country: str
+    native_country: str 
 
-    class Config:
+    class ConfigDict:
         json_schema_extra = {
-                        "example": {"age": 47,
-            "workclass": "Private",
-            "fnlgt": 51835,
-            "education": "Prof-school",
-            "education_num": 15,
-            "marital_status": "Married-civ-spouse",
-            "occupation": "Prof-specialty",
-            "relationship": "Wife",
-            "race": "White",
-            "sex": "Female",
-            "capital_gain": 0,
-            "capital_loss": 1902,
-            "hours_per_week": 60,
-            "native_country": "Honduras"
-            }
+                        "example": {
+                                    'age':50,
+                                    'workclass':"Private", 
+                                    'fnlgt':234721,
+                                    'education':"Doctorate",
+                                    'education_num':16,
+                                    'marital_status':"Separated",
+                                    'occupation':"Exec-managerial",
+                                    'relationship':"Not-in-family",
+                                    'race':"Black",
+                                    'sex':"Female",
+                                    'capital_gain':0,
+                                    'capital_loss':0,
+                                    'hours_per_week':50,
+                                    'native_country':"United-States"
+                                    }
                         }
 
 # Paths to model artifacts
@@ -72,15 +78,25 @@ model_file = model_artifact_dir + 'model.pkl'
 encoder_file = model_artifact_dir + 'encoder.pkl'
 label_binarizer_file = model_artifact_dir + 'lb.pkl'
 
-model = joblib.load(model_file)
-encoder = joblib.load(encoder_file)
-lb = joblib.load(label_binarizer_file)
 
-# Initialize the FastAPI app
 api = FastAPI(title="Prediction API", 
               description="Runs prediction on a sample.",
               version="1.0.0")
 
+
+@api.on_event("startup")
+async def load_model():
+    global model, encoder, lb
+    global model_file, encoder_file, label_binarizer_file
+    model = joblib.load(model_file)
+    encoder = joblib.load(encoder_file)
+    lb = joblib.load(label_binarizer_file)
+
+@api.on_event("shutdown")
+async def clear_model():
+    model.clear()
+    encoder.clear()
+    lb.clear()
 
 @api.get('/')
 async def welcome():
@@ -88,30 +104,25 @@ async def welcome():
 
 @api.post('/predict')
 async def generate_prediction(client_input: ClientInput):
-    logger.info(f"{client_input.age}")
     # create dictionary
-    data = {'age': client_input.age,
-                'workclass': client_input.workclass, 
-                'fnlgt': client_input.fnlgt,
-                'education': client_input.education,
-                'education-num': client_input.education_num,
-                'marital-status': client_input.marital_status,
-                'occupation': client_input.occupation,
-                'relationship': client_input.relationship,
-                'race': client_input.race,
-                'sex': client_input.sex,
-                'capital-gain': client_input.capital_gain,
-                'capital-loss': client_input.capital_loss,
-                'hours-per-week': client_input.hours_per_week,
-                'native-country': client_input.native_country,
-                }
+    data_old = client_input.model_dump()
+    data = {}
+    for key, value in data_old.items():
+        new_key = hyphen_to_underscore(key)
+        data[new_key] = value
+
     input_df = pd.DataFrame(data, index=[0])
+
+    if os.path.isfile(model_file):
+        model = joblib.load(model_file)
+        encoder = joblib.load(encoder_file)
+        lb = joblib.load(label_binarizer_file)
 
     prepared_data = process_data(
         input_df, categorical_features=categorical_features, training=False, 
         encoder=encoder, lb=lb
     )
-
+    
     x_data, y_data, _, _ = prepared_data
     income_prediction = inference(model, x_data)
 
