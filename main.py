@@ -105,7 +105,7 @@ async def welcome():
 @api.post('/predict')
 async def generate_prediction(client_input: ClientInput):
     # create dictionary
-    data_old = client_input.model_dump()
+    data_old = client_input.dict()
     data = {}
     for key, value in data_old.items():
         new_key = hyphen_to_underscore(key)
