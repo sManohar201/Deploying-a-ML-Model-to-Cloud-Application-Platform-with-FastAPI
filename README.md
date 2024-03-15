@@ -1,3 +1,15 @@
+# Project Introduction:
+
+In this project we will train a classification model on publicly available Census Bureau data. The trained model is then deployed on render with FastAPI.
+
+The project follows the steps mentioned below:
+   - Model development: Please refer `model_card.md` to understand more about the model used in the project. 
+   - FastAPI: Create FastAPI for inference. `main.py` file implements the endpoint functions. `post_api.py` file has an inference call when deployed 
+      to Reder platform. 
+   - Render: Create cloud inference endpoint. the required files are `requirements.txt` for installing the dependencies. 
+   - CI/CD: Implement continuous integration and continuous deployment using github actions and Render platform. 
+
+# Project Instructions and results:
 Working in a command line environment is recommended for ease of use with git and dvc. If on Windows, WSL1 or 2 is recommended.
 
 # Environment Set up
@@ -35,6 +47,8 @@ To use your new S3 bucket from the AWS CLI you will need to create an IAM user w
    * Make sure you set up the GitHub Action to have the same version of Python as you used in development.
 * Add your <a href="https://github.com/marketplace/actions/configure-aws-credentials-action-for-github-actions" target="_blank">AWS credentials to the Action</a>.
 * Set up <a href="https://github.com/iterative/setup-dvc" target="_blank">DVC in the action</a> and specify a command to `dvc pull`.
+
+
 
 ## Data
 
